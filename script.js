@@ -59,6 +59,13 @@ function restartGame() {
     startGame();
 }
 
+function backToMenu() {
+    playing = false;
+    gameArea.classList.add("hidden");
+    gameOver.classList.add("hidden");
+    mainMenu.classList.remove("hidden");
+}
+
 function gameLoop(timestamp) {
     if (!playing) return;
 
