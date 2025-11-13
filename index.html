@@ -9,6 +9,12 @@
 <div id="mainMenu">
     <h1>Click Game</h1>
     <button onclick="startGame()">Start</button>
+    <div id="settingsPanel">
+        <h2>Settings</h2>
+        <label for="maxDifficultySlider">Max Difficulty: <span id="maxDifficultyValue">6.0</span>x</label>
+        <input type="range" id="maxDifficultySlider" min="1" max="20" step="0.1" value="6">
+        <p class="setting-hint">Higher values make the timer drain faster as the run goes on.</p>
+    </div>
 </div>
 
 <div id="gameArea" class="hidden">

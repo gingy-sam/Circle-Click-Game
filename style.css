@@ -19,6 +19,18 @@ body {
     transform: translate(-50%, -50%);
 }
 
+#mainMenu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 48px 56px;
+    border-radius: 28px;
+    background: rgba(10, 14, 26, 0.78);
+    box-shadow: 0 35px 60px rgba(10, 14, 26, 0.65);
+    backdrop-filter: blur(14px);
+}
+
 #mainMenu h1,
 #gameOver h1 {
     font-size: 72px;
@@ -26,6 +38,52 @@ body {
     margin-bottom: 30px;
     text-transform: uppercase;
     text-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 20px rgba(100, 170, 255, 0.7);
+}
+
+#settingsPanel {
+    width: 360px;
+    padding: 28px;
+    border-radius: 20px;
+    background: rgba(28, 36, 66, 0.7);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    text-align: left;
+}
+
+#settingsPanel h2 {
+    margin: 0;
+    font-size: 26px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+#settingsPanel label {
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+#maxDifficultyValue {
+    font-size: 22px;
+    font-weight: 700;
+    color: #70a1ff;
+}
+
+#settingsPanel input[type="range"] {
+    width: 100%;
+    accent-color: #5352ed;
+}
+
+#settingsPanel .setting-hint {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.7;
+    line-height: 1.4;
 }
 
 button {
