@@ -241,22 +241,43 @@ function spawnCircle() {
         spawnCircle();
     };
 
-    // Right-click handler (contextmenu) — used for green circles
+    // Right-click handler (contextmenu) — used for green circles; right-clicking
+    // a normal circle now penalizes the player.
     circle.oncontextmenu = (event) => {
-        if (circle.dataset.isGreen !== '1') return; // only handle for green
-        event.preventDefault(); // prevent browser context menu
+        // Always prevent the browser context menu when interacting with the circle
+        event.preventDefault();
 
-        // Valid hit: award time and points (same formula as normal hits)
-        timer += 1;
+        const wasGreen = circle.dataset.isGreen === '1';
+        if (wasGreen) {
+            // Valid hit: award time and points (same formula as normal hits)
+            timer += 1;
+            const sizeRatio = 160 / parseFloat(circle.style.width);
+            const pointsGained = Math.max(1, Math.floor(sizeRatio * 10));
+            points += pointsGained;
+            if (pointsEl) pointsEl.textContent = `Points: ${points}`;
+
+            // Show green points effect at mouse position
+            const clickX = event.clientX;
+            const clickY = event.clientY;
+            showPointsEffect(clickX, clickY, pointsGained);
+
+            spawnCircle();
+            return;
+        }
+
+        // Right-clicked a normal (non-green) circle: penalize by the points
+        // the player would have gained for a correct hit (same as missedPoints)
         const sizeRatio = 160 / parseFloat(circle.style.width);
-        const pointsGained = Math.max(1, Math.floor(sizeRatio * 10));
-        points += pointsGained;
+        const missedPoints = Math.max(1, Math.floor(sizeRatio * 10));
+
+        points -= missedPoints;
+        if (points < 0) points = 0;
         if (pointsEl) pointsEl.textContent = `Points: ${points}`;
 
-        // Show green points effect at mouse position
+        // Show negative points effect at mouse position
         const clickX = event.clientX;
         const clickY = event.clientY;
-        showPointsEffect(clickX, clickY, pointsGained);
+        showPointsEffect(clickX, clickY, -missedPoints);
 
         spawnCircle();
     };
