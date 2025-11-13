@@ -21,6 +21,49 @@ const gameOver = document.getElementById("gameOver");
 const maxDifficultySlider = document.getElementById("maxDifficultySlider");
 const maxDifficultyValue = document.getElementById("maxDifficultyValue");
 const pointsEl = document.getElementById("points");
+const triangleBackground = document.getElementById("triangleBackground");
+
+// Create animated triangles for main menu background
+function createTriangles() {
+    if (!triangleBackground) return;
+    
+    // Create multiple triangles with different sizes and positions
+    for (let i = 1; i <= 12; i++) {
+        const triangle = document.createElement("div");
+        triangle.className = `triangle triangle-${i}`;
+        triangle.style.zIndex = '0';
+        triangleBackground.appendChild(triangle);
+    }
+    
+    // Add more triangles with random sizes for more variation
+    const blueShades = ['#3d7bbf', '#4a7bc8', '#4a90e2', '#4e8cc7', '#5b9bd5', '#5c8fd4', '#5f9dd0', '#6ba3d8', '#6da0d9', '#7db3e0', '#7eb2df', '#8fc1e8'];
+    
+    for (let i = 13; i <= 20; i++) {
+        const triangle = document.createElement("div");
+        const baseSize = Math.random() * 40 + 10; // Random size between 10-50px
+        const height = baseSize * 1.7;
+        const shade = blueShades[Math.floor(Math.random() * blueShades.length)];
+        const leftPos = Math.random() * 100; // Random horizontal position
+        const duration = Math.random() * 6 + 8; // Random duration 8-14s
+        const delay = Math.random() * 5; // Random delay 0-5s
+        
+        triangle.className = 'triangle';
+        triangle.style.borderLeft = `${baseSize}px solid transparent`;
+        triangle.style.borderRight = `${baseSize}px solid transparent`;
+        triangle.style.borderBottom = `${height}px solid ${shade}`;
+        triangle.style.left = `${leftPos}%`;
+        triangle.style.animationDuration = `${duration}s`;
+        triangle.style.animationDelay = `${delay}s`;
+        triangle.style.zIndex = '0';
+        
+        triangleBackground.appendChild(triangle);
+    }
+}
+
+// Initialize triangles when page loads
+if (triangleBackground) {
+    createTriangles();
+}
 
 function syncMaxDifficultyLabel(value) {
     if (!maxDifficultyValue) return;

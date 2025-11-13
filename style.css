@@ -11,7 +11,179 @@ body {
     display: none !important;
 }
 
-#mainMenu,
+#mainMenu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: radial-gradient(circle at top, #1a1a3e 0%, #0f0f1f 40%, #050510 100%);
+}
+
+#triangleBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.triangle {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0.4;
+    animation: floatUp linear infinite;
+    z-index: 0;
+}
+
+.triangle-1 {
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 25px solid #4a90e2;
+    left: 8%;
+    animation-duration: 8s;
+    animation-delay: 0s;
+}
+
+.triangle-2 {
+    border-left: 60px solid transparent;
+    border-right: 60px solid transparent;
+    border-bottom: 100px solid #5b9bd5;
+    left: 20%;
+    animation-duration: 10s;
+    animation-delay: 1s;
+}
+
+.triangle-3 {
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 35px solid #6ba3d8;
+    left: 42%;
+    animation-duration: 12s;
+    animation-delay: 2s;
+}
+
+.triangle-4 {
+    border-left: 45px solid transparent;
+    border-right: 45px solid transparent;
+    border-bottom: 75px solid #7db3e0;
+    left: 58%;
+    animation-duration: 9s;
+    animation-delay: 0.5s;
+}
+
+.triangle-5 {
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 20px solid #8fc1e8;
+    left: 72%;
+    animation-duration: 11s;
+    animation-delay: 1.5s;
+}
+
+.triangle-6 {
+    border-left: 55px solid transparent;
+    border-right: 55px solid transparent;
+    border-bottom: 90px solid #4a7bc8;
+    left: 12%;
+    animation-duration: 13s;
+    animation-delay: 3s;
+}
+
+.triangle-7 {
+    border-left: 28px solid transparent;
+    border-right: 28px solid transparent;
+    border-bottom: 48px solid #5c8fd4;
+    left: 32%;
+    animation-duration: 10s;
+    animation-delay: 2.5s;
+}
+
+.triangle-8 {
+    border-left: 38px solid transparent;
+    border-right: 38px solid transparent;
+    border-bottom: 65px solid #6da0d9;
+    left: 52%;
+    animation-duration: 9s;
+    animation-delay: 1.2s;
+}
+
+.triangle-9 {
+    border-left: 18px solid transparent;
+    border-right: 18px solid transparent;
+    border-bottom: 30px solid #7eb2df;
+    left: 78%;
+    animation-duration: 11s;
+    animation-delay: 0.8s;
+}
+
+.triangle-10 {
+    border-left: 70px solid transparent;
+    border-right: 70px solid transparent;
+    border-bottom: 120px solid #3d7bbf;
+    left: 3%;
+    animation-duration: 14s;
+    animation-delay: 4s;
+}
+
+.triangle-11 {
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 42px solid #4e8cc7;
+    left: 68%;
+    animation-duration: 10s;
+    animation-delay: 2s;
+}
+
+.triangle-12 {
+    border-left: 35px solid transparent;
+    border-right: 35px solid transparent;
+    border-bottom: 58px solid #5f9dd0;
+    left: 38%;
+    animation-duration: 12s;
+    animation-delay: 3.5s;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.4;
+    }
+    90% {
+        opacity: 0.4;
+    }
+    100% {
+        transform: translateY(-200px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+#mainMenuContent {
+    position: relative;
+    z-index: 10;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 48px 56px;
+    border-radius: 28px;
+    background: rgba(10, 14, 26, 0.78);
+    box-shadow: 0 35px 60px rgba(10, 14, 26, 0.65);
+    backdrop-filter: blur(14px);
+    border: 2px solid rgba(112, 161, 255, 0.3);
+}
+
 #gameOver {
     position: absolute;
     top: 50%;
