@@ -3,6 +3,7 @@ let difficulty = 1;
 let playing = false;
 let lastTimestamp = null; // used for time-based updates
 let points = 0;
+let highScore = 0;
 
 // Tunable constants (feel free to tweak)a
 const BASE_DRAIN_PER_SEC = 0.6; // seconds of timer drained per real second at difficulty = 1
@@ -12,6 +13,7 @@ const DIFFICULTY_GROWTH_PER_SEC = 0.25; // how much difficulty increases per sec
 // or tweak it via the main menu settings slider.
 const DEFAULT_MAX_DIFFICULTY = 6.0;
 let maxDifficulty = DEFAULT_MAX_DIFFICULTY;
+const HIGH_SCORE_STORAGE_KEY = "circleClickHighScore";
 
 const timerEl = document.getElementById("timer");
 const circle = document.getElementById("circle");
@@ -23,6 +25,45 @@ const maxDifficultyValue = document.getElementById("maxDifficultyValue");
 const pointsEl = document.getElementById("points");
 const triangleBackground = document.getElementById("triangleBackground");
 const rulesModal = document.getElementById("rulesModal");
+const finalScoreEl = document.getElementById("finalScore");
+const finalScoreBreakdownEl = document.getElementById("finalScoreBreakdown");
+const highScoreDisplayEl = document.getElementById("highScoreDisplay");
+
+function updateHighScoreDisplay() {
+    if (!highScoreDisplayEl) return;
+    const formatted = Math.round(highScore);
+    highScoreDisplayEl.textContent = `High Score: ${formatted}`;
+}
+
+function loadHighScore() {
+    try {
+        const stored = localStorage.getItem(HIGH_SCORE_STORAGE_KEY);
+        const parsed = stored !== null ? Number(stored) : 0;
+        if (Number.isFinite(parsed) && parsed > 0) {
+            highScore = parsed;
+        }
+    } catch (error) {
+        console.warn("Unable to read high score:", error);
+    }
+
+    updateHighScoreDisplay();
+}
+
+function saveHighScoreIfNeeded(score) {
+    if (score <= highScore) {
+        updateHighScoreDisplay();
+        return;
+    }
+
+    highScore = score;
+    updateHighScoreDisplay();
+
+    try {
+        localStorage.setItem(HIGH_SCORE_STORAGE_KEY, String(highScore));
+    } catch (error) {
+        console.warn("Unable to persist high score:", error);
+    }
+}
 
 // Create animated triangles for main menu background
 function createTriangles() {
@@ -65,6 +106,8 @@ function createTriangles() {
 if (triangleBackground) {
     createTriangles();
 }
+
+loadHighScore();
 
 function showRules() {
     if (!rulesModal) return;
@@ -160,6 +203,19 @@ function endGame() {
     playing = false;
     gameArea.classList.add("hidden");
     gameOver.classList.remove("hidden");
+
+    const clampedDifficulty = Math.max(1, Math.min(maxDifficulty, difficulty));
+    const safePoints = Math.max(0, points);
+    const finalScore = Math.round(safePoints * clampedDifficulty);
+
+    if (finalScoreEl) {
+        finalScoreEl.textContent = `Final Score: ${finalScore}`;
+    }
+    if (finalScoreBreakdownEl) {
+        finalScoreBreakdownEl.textContent = `${safePoints} base × ${clampedDifficulty.toFixed(1)}x = ${finalScore}`;
+    }
+
+    saveHighScoreIfNeeded(finalScore);
 }
 
 function showPointsEffect(x, y, pointsGained) {
