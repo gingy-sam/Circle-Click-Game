@@ -4,7 +4,7 @@ let playing = false;
 let lastTimestamp = null; // used for time-based updates
 let points = 0;
 
-// Tunable constants (feel free to tweak)
+// Tunable constants (feel free to tweak)a
 const BASE_DRAIN_PER_SEC = 0.6; // seconds of timer drained per real second at difficulty = 1
 const DIFFICULTY_GROWTH_PER_SEC = 0.25; // how much difficulty increases per second (linear)
 
