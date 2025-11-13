@@ -1,0 +1,30 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: #222;
+    color: white;
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
+
+#gameArea {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+#timer {
+    font-size: 32px;
+    margin-top: 15px;
+}
+
+#circle {
+    position: absolute;
+    background: rgb(255, 80, 80);
+    border-radius: 50%;
+    cursor: pointer;
+}
