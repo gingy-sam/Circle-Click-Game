@@ -1,14 +1,55 @@
 body {
     margin: 0;
     overflow: hidden;
-    font-family: Arial, sans-serif;
-    background: #222;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: radial-gradient(circle at top, #3b3b98 0%, #1e1e2f 40%, #0d0d17 100%);
     color: white;
     text-align: center;
 }
 
 .hidden {
     display: none;
+}
+
+#mainMenu,
+#gameOver {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#mainMenu h1,
+#gameOver h1 {
+    font-size: 72px;
+    letter-spacing: 4px;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    text-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 20px rgba(100, 170, 255, 0.7);
+}
+
+button {
+    font-size: 28px;
+    font-weight: 600;
+    padding: 18px 60px;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #70a1ff, #5352ed);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 15px 35px rgba(83, 82, 237, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 20px 40px rgba(83, 82, 237, 0.45);
+    filter: brightness(1.05);
+}
+
+button:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 8px 20px rgba(83, 82, 237, 0.4);
 }
 
 #gameArea {
