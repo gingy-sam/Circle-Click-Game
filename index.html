@@ -8,7 +8,10 @@
 
 <div id="mainMenu">
     <h1>Click Game</h1>
-    <button onclick="startGame()">Start</button>
+    <button id="startBtn" class="button-global" onclick="startGame()">
+        <span class="button-text">Start Game</span>
+        <div class="cursor-container" id="cursorContainer"></div>
+    </button>
 </div>
 
 <div id="gameArea" class="hidden">
