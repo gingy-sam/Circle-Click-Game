@@ -121,6 +121,41 @@ button:active {
     margin-top: 15px;
 }
 
+#points {
+    font-size: 28px;
+    font-weight: 600;
+    margin-top: 20px;
+    color: #70a1ff;
+    text-shadow: 0 0 10px rgba(112, 161, 255, 0.5);
+}
+
+.points-effect {
+    position: fixed;
+    font-size: 36px;
+    font-weight: 700;
+    color: #4ade80;
+    text-shadow: 0 0 15px rgba(74, 222, 128, 0.8), 0 2px 8px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    z-index: 1000;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+@keyframes pointsFloat {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -100%) scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -150%) scale(0.8);
+    }
+}
+
 #circle {
     position: absolute;
     background: rgb(255, 80, 80);

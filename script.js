@@ -2,6 +2,7 @@ let timer = 10;
 let difficulty = 1;
 let playing = false;
 let lastTimestamp = null; // used for time-based updates
+let points = 0;
 
 // Tunable constants (feel free to tweak)
 const BASE_DRAIN_PER_SEC = 0.6; // seconds of timer drained per real second at difficulty = 1
@@ -19,6 +20,7 @@ const gameArea = document.getElementById("gameArea");
 const gameOver = document.getElementById("gameOver");
 const maxDifficultySlider = document.getElementById("maxDifficultySlider");
 const maxDifficultyValue = document.getElementById("maxDifficultyValue");
+const pointsEl = document.getElementById("points");
 
 function syncMaxDifficultyLabel(value) {
     if (!maxDifficultyValue) return;
@@ -43,6 +45,8 @@ function startGame() {
     timer = 10;
     difficulty = 1;
     playing = true;
+    points = 0;
+    if (pointsEl) pointsEl.textContent = "Points: 0";
 
     // reset timestamp and start the RAF-based game loop
     lastTimestamp = null;
@@ -87,6 +91,27 @@ function endGame() {
     gameOver.classList.remove("hidden");
 }
 
+function showPointsEffect(x, y, pointsGained) {
+    const effect = document.createElement("div");
+    effect.className = "points-effect";
+    effect.textContent = `+${pointsGained}`;
+    effect.style.left = x + "px";
+    effect.style.top = y + "px";
+    document.body.appendChild(effect);
+
+    // Animate the effect
+    setTimeout(() => {
+        effect.style.animation = "pointsFloat 1s ease-out forwards";
+    }, 10);
+
+    // Remove the element after animation
+    setTimeout(() => {
+        if (effect.parentNode) {
+            effect.parentNode.removeChild(effect);
+        }
+    }, 1100);
+}
+
 function spawnCircle() {
     // Random size
     const size = Math.random() * 120 + 40;
@@ -100,8 +125,23 @@ function spawnCircle() {
     circle.style.left = Math.random() * maxX + "px";
     circle.style.top = Math.random() * maxY + "px";
 
-    circle.onclick = () => {
+    circle.onclick = (event) => {
         timer += 1;
+        
+        // Calculate points based on circle size (smaller = more points)
+        // Smaller circles are harder to hit, so reward more points
+        const sizeRatio = 160 / parseFloat(circle.style.width); // 160 is max size (120+40)
+        const pointsGained = Math.max(1, Math.floor(sizeRatio * 10));
+        points += pointsGained;
+        
+        if (pointsEl) pointsEl.textContent = `Points: ${points}`;
+        
+        // Show points effect at click position
+        const rect = circle.getBoundingClientRect();
+        const clickX = event.clientX;
+        const clickY = event.clientY;
+        showPointsEffect(clickX, clickY, pointsGained);
+        
         spawnCircle();
     };
 }
