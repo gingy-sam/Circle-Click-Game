@@ -22,6 +22,7 @@ const maxDifficultySlider = document.getElementById("maxDifficultySlider");
 const maxDifficultyValue = document.getElementById("maxDifficultyValue");
 const pointsEl = document.getElementById("points");
 const triangleBackground = document.getElementById("triangleBackground");
+const rulesModal = document.getElementById("rulesModal");
 
 // Create animated triangles for main menu background
 function createTriangles() {
@@ -65,6 +66,24 @@ if (triangleBackground) {
     createTriangles();
 }
 
+function showRules() {
+    if (!rulesModal) return;
+    rulesModal.classList.remove("hidden");
+}
+
+function hideRules() {
+    if (!rulesModal) return;
+    rulesModal.classList.add("hidden");
+}
+
+if (rulesModal) {
+    rulesModal.addEventListener("click", (event) => {
+        if (event.target === rulesModal) {
+            hideRules();
+        }
+    });
+}
+
 function syncMaxDifficultyLabel(value) {
     if (!maxDifficultyValue) return;
     maxDifficultyValue.textContent = value.toFixed(1);
@@ -81,6 +100,7 @@ if (maxDifficultySlider) {
 }
 
 function startGame() {
+    hideRules();
     mainMenu.classList.add("hidden");
     gameOver.classList.add("hidden");
     gameArea.classList.remove("hidden");
@@ -107,6 +127,7 @@ function backToMenu() {
     gameArea.classList.add("hidden");
     gameOver.classList.add("hidden");
     mainMenu.classList.remove("hidden");
+    hideRules();
 }
 
 function gameLoop(timestamp) {
