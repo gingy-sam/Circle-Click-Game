@@ -3,7 +3,6 @@ let difficulty = 1;
 let playing = false;
 let lastTimestamp = null; // used for time-based updates
 let points = 0;
-let highScore = 0;
 
 // Tunable constants (feel free to tweak)
 const BASE_DRAIN_PER_SEC = 0.6; // seconds of timer drained per real second at difficulty = 1
@@ -13,7 +12,6 @@ const DIFFICULTY_GROWTH_PER_SEC = 0.25; // how much difficulty increases per sec
 // or tweak it via the main menu settings slider.
 const DEFAULT_MAX_DIFFICULTY = 6.0;
 let maxDifficulty = DEFAULT_MAX_DIFFICULTY;
-const HIGH_SCORE_STORAGE_KEY = "circleClickHighScore";
 
 const timerEl = document.getElementById("timer");
 const circle = document.getElementById("circle");
@@ -23,45 +21,6 @@ const gameOver = document.getElementById("gameOver");
 const maxDifficultySlider = document.getElementById("maxDifficultySlider");
 const maxDifficultyValue = document.getElementById("maxDifficultyValue");
 const pointsEl = document.getElementById("points");
-const finalScoreEl = document.getElementById("finalScore");
-const finalScoreBreakdownEl = document.getElementById("finalScoreBreakdown");
-const highScoreDisplayEl = document.getElementById("highScoreDisplay");
-
-function updateHighScoreDisplay() {
-    if (!highScoreDisplayEl) return;
-    const formatted = Math.round(highScore);
-    highScoreDisplayEl.textContent = `High Score: ${formatted}`;
-}
-
-function loadHighScore() {
-    try {
-        const stored = localStorage.getItem(HIGH_SCORE_STORAGE_KEY);
-        const parsed = stored !== null ? Number(stored) : 0;
-        if (Number.isFinite(parsed) && parsed > 0) {
-            highScore = parsed;
-        }
-    } catch (error) {
-        // localStorage might be unavailable; ignore to keep gameplay working
-        console.warn("High score unavailable:", error);
-    }
-    updateHighScoreDisplay();
-}
-
-function saveHighScoreIfNeeded(score) {
-    if (score <= highScore) {
-        updateHighScoreDisplay();
-        return;
-    }
-
-    highScore = score;
-    updateHighScoreDisplay();
-
-    try {
-        localStorage.setItem(HIGH_SCORE_STORAGE_KEY, String(highScore));
-    } catch (error) {
-        console.warn("Unable to persist high score:", error);
-    }
-}
 
 function syncMaxDifficultyLabel(value) {
     if (!maxDifficultyValue) return;
@@ -130,24 +89,19 @@ function endGame() {
     playing = false;
     gameArea.classList.add("hidden");
     gameOver.classList.remove("hidden");
-
-    const difficultyMultiplier = Math.max(1, Math.min(maxDifficulty, difficulty));
-    const finalScore = Math.round(points * difficultyMultiplier);
-
-    if (finalScoreEl) {
-        finalScoreEl.textContent = `Final Score: ${finalScore}`;
-    }
-    if (finalScoreBreakdownEl) {
-        finalScoreBreakdownEl.textContent = `${points} base × ${difficultyMultiplier.toFixed(1)}x difficulty`;
-    }
-
-    saveHighScoreIfNeeded(finalScore);
 }
 
 function showPointsEffect(x, y, pointsGained) {
     const effect = document.createElement("div");
     effect.className = "points-effect";
-    effect.textContent = `+${pointsGained}`;
+    // Show + for positive gains, - for penalties
+    if (pointsGained >= 0) {
+        effect.textContent = `+${pointsGained}`;
+        effect.style.color = '#8ef57a'; // greenish for gains
+    } else {
+        effect.textContent = `-${Math.abs(pointsGained)}`;
+        effect.style.color = '#ff7b7b'; // reddish for penalties
+    }
     effect.style.left = x + "px";
     effect.style.top = y + "px";
     document.body.appendChild(effect);
@@ -171,6 +125,21 @@ function spawnCircle() {
     circle.style.width = size + "px";
     circle.style.height = size + "px";
 
+    // Decide if this circle is a "green" one (30% chance)
+    const isGreen = Math.random() < 0.3;
+    circle.dataset.isGreen = isGreen ? '1' : '0';
+    if (isGreen) {
+        // visually indicate green circle; override background color
+        circle.style.backgroundColor = 'limegreen';
+        circle.style.borderColor = 'darkgreen';
+        circle.title = 'Right-click me!';
+    } else {
+        // clear inline color so CSS default applies
+        circle.style.backgroundColor = '';
+        circle.style.borderColor = '';
+        circle.title = '';
+    }
+
     // Random position inside viewport
     const maxX = window.innerWidth - size;
     const maxY = window.innerHeight - size;
@@ -178,26 +147,62 @@ function spawnCircle() {
     circle.style.left = Math.random() * maxX + "px";
     circle.style.top = Math.random() * maxY + "px";
 
+    // Left-click handler
     circle.onclick = (event) => {
+        const wasGreen = circle.dataset.isGreen === '1';
+
+        if (wasGreen) {
+            // Penalize left-click on green circle: lose points equal to size (rounded)
+            const penalty = Math.round(size);
+            points -= penalty;
+            if (pointsEl) pointsEl.textContent = `Points: ${points}`;
+
+            // Show negative points effect at click position
+            const clickX = event.clientX;
+            const clickY = event.clientY;
+            showPointsEffect(clickX, clickY, -penalty);
+
+            // Spawn a new circle after penalty
+            spawnCircle();
+            return;
+        }
+
+        // Normal (non-green) left-click: reward and add time
         timer += 1;
-        
+
         // Calculate points based on circle size (smaller = more points)
         // Smaller circles are harder to hit, so reward more points
         const sizeRatio = 160 / parseFloat(circle.style.width); // 160 is max size (120+40)
         const pointsGained = Math.max(1, Math.floor(sizeRatio * 10));
         points += pointsGained;
-        
+
         if (pointsEl) pointsEl.textContent = `Points: ${points}`;
-        
+
         // Show points effect at click position
-        const rect = circle.getBoundingClientRect();
         const clickX = event.clientX;
         const clickY = event.clientY;
         showPointsEffect(clickX, clickY, pointsGained);
-        
+
+        spawnCircle();
+    };
+
+    // Right-click handler (contextmenu) — used for green circles
+    circle.oncontextmenu = (event) => {
+        if (circle.dataset.isGreen !== '1') return; // only handle for green
+        event.preventDefault(); // prevent browser context menu
+
+        // Valid hit: award time and points (same formula as normal hits)
+        timer += 1;
+        const sizeRatio = 160 / parseFloat(circle.style.width);
+        const pointsGained = Math.max(1, Math.floor(sizeRatio * 10));
+        points += pointsGained;
+        if (pointsEl) pointsEl.textContent = `Points: ${points}`;
+
+        // Show green points effect at mouse position
+        const clickX = event.clientX;
+        const clickY = event.clientY;
+        showPointsEffect(clickX, clickY, pointsGained);
+
         spawnCircle();
     };
 }
-
-// Initialize UI state when the script loads
-loadHighScore();
