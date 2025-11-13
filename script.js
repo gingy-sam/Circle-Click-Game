@@ -1,6 +1,11 @@
 let timer = 10;
 let difficulty = 1;
 let playing = false;
+let lastTimestamp = null; // used for time-based updates
+
+// Tunable constants (feel free to tweak)
+const BASE_DRAIN_PER_SEC = 0.6; // seconds of timer drained per real second at difficulty = 1
+const DIFFICULTY_GROWTH_PER_SEC = 0.25; // how much difficulty increases per second (linear)
 
 const timerEl = document.getElementById("timer");
 const circle = document.getElementById("circle");
@@ -17,21 +22,31 @@ function startGame() {
     difficulty = 1;
     playing = true;
 
+    // reset timestamp and start the RAF-based game loop
+    lastTimestamp = null;
+
     spawnCircle();
-    gameLoop();
+    requestAnimationFrame(gameLoop);
 }
 
 function restartGame() {
     startGame();
 }
 
-function gameLoop() {
+function gameLoop(timestamp) {
     if (!playing) return;
 
-    timer -= 0.01 * difficulty;
-    timerEl.textContent = timer.toFixed(1);
+    // timestamp is provided by requestAnimationFrame (ms). Use it to compute dt (s).
+    if (!lastTimestamp) lastTimestamp = timestamp;
+    const dt = Math.max(0, (timestamp - lastTimestamp) / 1000);
+    lastTimestamp = timestamp;
 
-    difficulty += 0.0003;
+    // Drain the timer in a time-accurate way. Drain scales with difficulty.
+    timer -= BASE_DRAIN_PER_SEC * difficulty * dt;
+    timerEl.textContent = Math.max(0, timer).toFixed(1);
+
+    // Increase difficulty over time (linear growth). This makes the drain accelerate.
+    difficulty += DIFFICULTY_GROWTH_PER_SEC * dt;
 
     if (timer <= 0) {
         endGame();
