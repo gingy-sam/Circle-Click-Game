@@ -152,15 +152,20 @@ function spawnCircle() {
         const wasGreen = circle.dataset.isGreen === '1';
 
         if (wasGreen) {
-            // Penalize left-click on green circle: lose points equal to size (rounded)
-            const penalty = Math.round(size);
-            points -= penalty;
+            // Penalize left-click on green circle: lose the points they would have gained
+            // Calculate the points that would have been awarded for a correct (right-click) hit
+            const missedSizeRatio = 160 / parseFloat(circle.style.width);
+            const missedPoints = Math.max(1, Math.floor(missedSizeRatio * 10));
+
+            points -= missedPoints;
+            // Ensure score doesn't go below zero
+            if (points < 0) points = 0;
             if (pointsEl) pointsEl.textContent = `Points: ${points}`;
 
-            // Show negative points effect at click position
+            // Show negative points effect at click position (use negative of missedPoints)
             const clickX = event.clientX;
             const clickY = event.clientY;
-            showPointsEffect(clickX, clickY, -penalty);
+            showPointsEffect(clickX, clickY, -missedPoints);
 
             // Spawn a new circle after penalty
             spawnCircle();
