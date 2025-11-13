@@ -17,9 +17,6 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-}
-
-#mainMenu {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -38,6 +35,25 @@ body {
     margin-bottom: 30px;
     text-transform: uppercase;
     text-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 20px rgba(100, 170, 255, 0.7);
+}
+
+#highScoreDisplay {
+    font-size: 22px;
+    font-weight: 600;
+    color: #4ade80;
+    text-shadow: 0 0 14px rgba(74, 222, 128, 0.55);
+}
+
+#gameOver #finalScore {
+    font-size: 40px;
+    font-weight: 700;
+    color: #ffe066;
+    text-shadow: 0 0 18px rgba(255, 224, 102, 0.6);
+}
+
+#gameOver #finalScoreBreakdown {
+    font-size: 18px;
+    opacity: 0.75;
 }
 
 #settingsPanel {

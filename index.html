@@ -9,6 +9,7 @@
 <div id="mainMenu">
     <h1>Click Game</h1>
     <button onclick="startGame()">Start</button>
+    <div id="highScoreDisplay">High Score: 0</div>
     <div id="settingsPanel">
         <h2>Settings</h2>
         <label for="maxDifficultySlider">Max Difficulty: <span id="maxDifficultyValue">6.0</span>x</label>
@@ -25,6 +26,8 @@
 
 <div id="gameOver" class="hidden">
     <h1>Game Over</h1>
+    <div id="finalScore">Final Score: 0</div>
+    <div id="finalScoreBreakdown">Points × Difficulty = 0</div>
     <button onclick="restartGame()">Restart</button>
 </div>
 

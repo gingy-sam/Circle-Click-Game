@@ -3,6 +3,7 @@ let difficulty = 1;
 let playing = false;
 let lastTimestamp = null; // used for time-based updates
 let points = 0;
+let highScore = 0;
 
 // Tunable constants (feel free to tweak)
 const BASE_DRAIN_PER_SEC = 0.6; // seconds of timer drained per real second at difficulty = 1
@@ -12,6 +13,7 @@ const DIFFICULTY_GROWTH_PER_SEC = 0.25; // how much difficulty increases per sec
 // or tweak it via the main menu settings slider.
 const DEFAULT_MAX_DIFFICULTY = 6.0;
 let maxDifficulty = DEFAULT_MAX_DIFFICULTY;
+const HIGH_SCORE_STORAGE_KEY = "circleClickHighScore";
 
 const timerEl = document.getElementById("timer");
 const circle = document.getElementById("circle");
@@ -21,6 +23,45 @@ const gameOver = document.getElementById("gameOver");
 const maxDifficultySlider = document.getElementById("maxDifficultySlider");
 const maxDifficultyValue = document.getElementById("maxDifficultyValue");
 const pointsEl = document.getElementById("points");
+const finalScoreEl = document.getElementById("finalScore");
+const finalScoreBreakdownEl = document.getElementById("finalScoreBreakdown");
+const highScoreDisplayEl = document.getElementById("highScoreDisplay");
+
+function updateHighScoreDisplay() {
+    if (!highScoreDisplayEl) return;
+    const formatted = Math.round(highScore);
+    highScoreDisplayEl.textContent = `High Score: ${formatted}`;
+}
+
+function loadHighScore() {
+    try {
+        const stored = localStorage.getItem(HIGH_SCORE_STORAGE_KEY);
+        const parsed = stored !== null ? Number(stored) : 0;
+        if (Number.isFinite(parsed) && parsed > 0) {
+            highScore = parsed;
+        }
+    } catch (error) {
+        // localStorage might be unavailable; ignore to keep gameplay working
+        console.warn("High score unavailable:", error);
+    }
+    updateHighScoreDisplay();
+}
+
+function saveHighScoreIfNeeded(score) {
+    if (score <= highScore) {
+        updateHighScoreDisplay();
+        return;
+    }
+
+    highScore = score;
+    updateHighScoreDisplay();
+
+    try {
+        localStorage.setItem(HIGH_SCORE_STORAGE_KEY, String(highScore));
+    } catch (error) {
+        console.warn("Unable to persist high score:", error);
+    }
+}
 
 function syncMaxDifficultyLabel(value) {
     if (!maxDifficultyValue) return;
@@ -89,6 +130,18 @@ function endGame() {
     playing = false;
     gameArea.classList.add("hidden");
     gameOver.classList.remove("hidden");
+
+    const difficultyMultiplier = Math.max(1, Math.min(maxDifficulty, difficulty));
+    const finalScore = Math.round(points * difficultyMultiplier);
+
+    if (finalScoreEl) {
+        finalScoreEl.textContent = `Final Score: ${finalScore}`;
+    }
+    if (finalScoreBreakdownEl) {
+        finalScoreBreakdownEl.textContent = `${points} base × ${difficultyMultiplier.toFixed(1)}x difficulty`;
+    }
+
+    saveHighScoreIfNeeded(finalScore);
 }
 
 function showPointsEffect(x, y, pointsGained) {
@@ -145,3 +198,6 @@ function spawnCircle() {
         spawnCircle();
     };
 }
+
+// Initialize UI state when the script loads
+loadHighScore();
